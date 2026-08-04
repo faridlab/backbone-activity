@@ -1,0 +1,134 @@
+# =============================================================================
+# Module: backbone-activity
+# Entity: Activity
+# Description: The sales-process substrate — a touchpoint or task linked to a
+# Lead and/or Opportunity and/or Party. ONE entity serves both scheduled future
+# work (status=planned + scheduled_at set) and logged past interactions
+# (status=done + occurred_at set). WhatsApp-first: activity_type=whatsapp is the
+# default Indonesia channel. This is the home the sales conversation was missing
+# (council 2026-08-04, rec #3). Posts NO GL. Cross-module ids are logical FKs.
+#
+# Design note: "at least one of lead_id / opportunity_id / party_id is set" is a
+# domain invariant the schema cannot express as a column constraint; enforce it
+# in the service layer (CUSTOM guard) or a DB CHECK added in the migration.
+# =============================================================================
+
+models:
+  - name: Activity
+    collection: activities
+    description: "A sales touchpoint or task — call, WhatsApp, email, meeting, visit, note — linked to a lead/opportunity/party"
+    fields:
+      id:
+        type: uuid
+        attributes: ["@id", "@default(uuid)"]
+        description: "Unique activity id"
+      company_id:
+        type: uuid
+        attributes: ["@required", "@exclude_from_foreign_key_check"]
+        description: "Org owner # logical FK to organization.Company.id"
+      subject:
+        type: string
+        attributes: ["@required", "@max(200)"]
+        description: "Short title / summary of the activity"
+      activity_type:
+        type: ActivityType
+        attributes: ["@required", "@default(whatsapp)"]
+        description: "What kind of touchpoint/task this is"
+      direction:
+        type: ActivityDirection?
+        description: "Inbound (customer to us) or outbound (us to customer)"
+      # --- links (at least one should be set; see design note) — ALL cross-module logical FKs ---
+      lead_id:
+        type: uuid?
+        attributes: ["@exclude_from_foreign_key_check"]
+        description: "Related lead (if pre-deal) # logical FK to lead.leads.id"
+      opportunity_id:
+        type: uuid?
+        attributes: ["@exclude_from_foreign_key_check"]
+        description: "Related opportunity (if in-pipeline) # logical FK to deal.opportunities.id"
+      party_id:
+        type: uuid?
+        attributes: ["@exclude_from_foreign_key_check"]
+        description: "The contact/customer # logical FK to party.Party.id"
+      # --- scheduling / lifecycle ---
+      status:
+        type: ActivityStatus
+        attributes: ["@required", "@default(planned)"]
+        description: "planned = upcoming task; done = logged interaction"
+      scheduled_at:
+        type: datetime?
+        description: "When the task is due / was planned for (status=planned)"
+      occurred_at:
+        type: datetime?
+        description: "When the interaction actually happened (status=done)"
+      assignee_id:
+        type: uuid?
+        attributes: ["@exclude_from_foreign_key_check"]
+        description: "Rep responsible # logical FK to sapiens.User.id"
+      outcome:
+        type: string?
+        attributes: ["@max(280)"]
+        description: "Result of the activity (e.g. 'interested', 'no answer', 'follow-up booked')"
+      notes:
+        type: string?
+        attributes: ["@max(4000)"]
+        description: "Free-text notes / summary of the conversation"
+      metadata:
+        type: Metadata
+        attributes: ["@audit_metadata"]
+        description: "Audit metadata"
+    indexes:
+      - type: index
+        fields: [company_id, status]
+      - type: index
+        fields: [lead_id]
+      - type: index
+        fields: [opportunity_id]
+      - type: index
+        fields: [party_id]
+      - type: index
+        fields: [assignee_id, scheduled_at]
+
+enums:
+  - name: ActivityType
+    description: "Kind of sales activity"
+    variants:
+      - name: whatsapp
+        description: "WhatsApp message/exchange (primary Indonesia channel)"
+        default: true
+      - name: call
+        description: "Phone call"
+      - name: email
+        description: "Email"
+      - name: meeting
+        description: "Meeting (in-person or video)"
+      - name: visit
+        description: "Site/office visit"
+      - name: task
+        description: "Generic task / to-do"
+      - name: note
+        description: "Free-form note"
+      - name: other
+        description: "Other"
+
+  - name: ActivityStatus
+    description: "Activity lifecycle state"
+    variants:
+      - name: planned
+        description: "Scheduled / upcoming (a task)"
+        default: true
+      - name: in_progress
+        description: "Currently happening"
+      - name: done
+        description: "Completed / logged interaction"
+      - name: cancelled
+        description: "Cancelled / no-show"
+
+  - name: ActivityDirection
+    description: "Direction of an interaction"
+    variants:
+      - name: inbound
+        description: "Customer to us"
+      - name: outbound
+        description: "Us to customer"
+        default: true
