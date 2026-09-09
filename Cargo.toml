@@ -1,6 +1,6 @@
 [package]
 name = "backbone-activity"
-version = "0.1.9"
+version = "0.2.0"
 edition = "2021"
 description = "Sales activity / touchpoints + rep tasks — the substrate lead/deal sit on"
 
@@ -60,6 +60,11 @@ serde_yaml = "0.9"
 tonic = "0.12"
 prost = "0.13"
 prost-types = "0.13"
+
+# OpenAPI schema derive. The schema generator emits `use utoipa::ToSchema;`
+# behind the `openapi` feature in entity and DTO files, so the crate must be
+# able to resolve it whenever that feature is turned on.
+utoipa = { version = "5", features = ["chrono", "uuid", "decimal"] }
 
 [features]
 default = []
