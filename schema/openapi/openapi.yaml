@@ -387,16 +387,12 @@ components:
       type: object
       required:
         - id
-        - company_id
         - subject
         - activity_type
         - status
         - metadata
       properties:
         id:
-          type: string
-          format: uuid
-        company_id:
           type: string
           format: uuid
         subject:
@@ -460,15 +456,11 @@ components:
     CreateActivityRequest:
       type: object
       required:
-        - company_id
         - subject
         - activity_type
         - status
         - metadata
       properties:
-        company_id:
-          type: string
-          format: uuid
         subject:
           type: string
           maxLength: 200
@@ -517,15 +509,11 @@ components:
     UpdateActivityRequest:
       type: object
       required:
-        - company_id
         - subject
         - activity_type
         - status
         - metadata
       properties:
-        company_id:
-          type: string
-          format: uuid
         subject:
           type: string
           maxLength: 200
@@ -574,9 +562,6 @@ components:
     PatchActivityRequest:
       type: object
       properties:
-        company_id:
-          type: string
-          format: uuid
         subject:
           type: string
           maxLength: 200

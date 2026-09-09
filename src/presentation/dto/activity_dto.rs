@@ -35,9 +35,6 @@ use crate::domain::entity::ActivityType;
 #[cfg_attr(feature = "validation", derive(Validate))]
 #[serde(rename_all = "camelCase")]
 pub struct CreateActivityDto {
-    #[cfg_attr(feature = "openapi", schema(example = "550e8400-e29b-41d4-a716-446655440000"))]
-    #[serde(alias = "company_id")]
-    pub company_id: Uuid,
     #[cfg_attr(feature = "validation", validate(length(max = 200)))]
     #[cfg_attr(feature = "openapi", schema(example = "example"))]
     pub subject: String,
@@ -79,9 +76,6 @@ pub struct CreateActivityDto {
 #[cfg_attr(feature = "validation", derive(Validate))]
 #[serde(rename_all = "camelCase")]
 pub struct UpdateActivityDto {
-    #[cfg_attr(feature = "openapi", schema(example = "550e8400-e29b-41d4-a716-446655440000"))]
-    #[serde(alias = "company_id")]
-    pub company_id: Uuid,
     #[cfg_attr(feature = "validation", validate(length(max = 200)))]
     #[cfg_attr(feature = "openapi", schema(example = "example"))]
     pub subject: String,
@@ -123,9 +117,6 @@ pub struct UpdateActivityDto {
 #[cfg_attr(feature = "validation", derive(Validate))]
 #[serde(rename_all = "camelCase")]
 pub struct PatchActivityDto {
-    #[cfg_attr(feature = "openapi", schema(example = "550e8400-e29b-41d4-a716-446655440000"))]
-    #[serde(skip_serializing_if = "Option::is_none", alias = "company_id")]
-    pub company_id: Option<Uuid>,
     #[cfg_attr(feature = "validation", validate(length(max = 200)))]
     #[cfg_attr(feature = "openapi", schema(example = "example"))]
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -159,7 +150,7 @@ pub struct PatchActivityDto {
 impl PatchActivityDto {
     /// Check if any field is set
     pub fn has_changes(&self) -> bool {
-        self.company_id.is_some() || self.subject.is_some() || self.activity_type.is_some() || self.direction.is_some() || self.lead_id.is_some() || self.opportunity_id.is_some() || self.party_id.is_some() || self.status.is_some() || self.scheduled_at.is_some() || self.occurred_at.is_some() || self.assignee_id.is_some() || self.outcome.is_some() || self.notes.is_some()
+        self.subject.is_some() || self.activity_type.is_some() || self.direction.is_some() || self.lead_id.is_some() || self.opportunity_id.is_some() || self.party_id.is_some() || self.status.is_some() || self.scheduled_at.is_some() || self.occurred_at.is_some() || self.assignee_id.is_some() || self.outcome.is_some() || self.notes.is_some()
     }
 }
 
@@ -177,8 +168,6 @@ impl PatchActivityDto {
 pub struct ActivityResponseDto {
     #[cfg_attr(feature = "openapi", schema(example = "550e8400-e29b-41d4-a716-446655440000"))]
     pub id: Uuid,
-    #[cfg_attr(feature = "openapi", schema(example = "550e8400-e29b-41d4-a716-446655440000"))]
-    pub company_id: Uuid,
     #[cfg_attr(feature = "openapi", schema(example = "example"))]
     pub subject: String,
     pub activity_type: ActivityType,
@@ -249,9 +238,9 @@ impl ActivityListResponseDto {
 #[serde(rename_all = "camelCase")]
 pub struct ActivitySummaryDto {
     pub id: Uuid,
-    pub company_id: Uuid,
     pub subject: String,
     pub activity_type: ActivityType,
+    pub direction: Option<ActivityDirection>,
     pub created_at: Option<DateTime<Utc>>,
 }
 
@@ -263,7 +252,6 @@ impl From<Activity> for ActivityResponseDto {
     fn from(entity: Activity) -> Self {
         Self {
             id: entity.id,
-            company_id: entity.company_id,
             subject: entity.subject,
             activity_type: entity.activity_type,
             direction: entity.direction,
@@ -286,9 +274,9 @@ impl From<Activity> for ActivitySummaryDto {
         let created_at = backbone_core::PersistentEntity::created_at(&entity);
         Self {
             id: entity.id,
-            company_id: entity.company_id,
             subject: entity.subject,
             activity_type: entity.activity_type,
+            direction: entity.direction,
             created_at,
         }
     }
@@ -298,7 +286,6 @@ impl From<CreateActivityDto> for Activity {
     fn from(dto: CreateActivityDto) -> Self {
         Self {
             id: Uuid::new_v4(),
-            company_id: dto.company_id,
             subject: dto.subject,
             activity_type: dto.activity_type,
             direction: dto.direction,
@@ -320,7 +307,6 @@ impl From<&Activity> for ActivityResponseDto {
     fn from(entity: &Activity) -> Self {
         Self {
             id: entity.id.clone(),
-            company_id: entity.company_id.clone(),
             subject: entity.subject.clone(),
             activity_type: entity.activity_type.clone(),
             direction: entity.direction.clone(),
@@ -346,7 +332,6 @@ impl backbone_core::FromCreateDto<CreateActivityDto> for Activity {
 
 impl backbone_core::ApplyUpdateDto<UpdateActivityDto> for Activity {
     fn apply_update(mut self, dto: UpdateActivityDto) -> backbone_core::ServiceResult<Self> {
-        self.company_id = dto.company_id;
         self.subject = dto.subject;
         self.activity_type = dto.activity_type;
         self.direction = dto.direction;
@@ -371,4 +356,3 @@ impl backbone_core::ApplyUpdateDto<UpdateActivityDto> for Activity {
 // Add custom DTOs specific to Activity here.
 // This section will be preserved during regeneration.
 // >>> END CUSTOM DTOs
-

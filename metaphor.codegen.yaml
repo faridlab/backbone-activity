@@ -19,6 +19,13 @@ user_owned:
   # doesn't resurrect the skeleton's example saga.
   - "src/application/workflows/mod.rs"
 
+  # Hand-authored migration that strips the company-fence artifacts (the company-leading
+  # index, the activities_company_isolation RLS policy, and the company_id column) from
+  # activity.activities. The ordering guard inside is hand-written logic, not
+  # schema-derived emission, so the pair must never be regenerated or deleted.
+  - "migrations/20260909120000_strip_tenancy.up.sql"
+  - "migrations/20260909120000_strip_tenancy.down.sql"
+
   # Behavior tests (the golden cases / oracle) + BDD features.
   - "tests/features/**"
   # - "tests/*_golden_cases.rs"

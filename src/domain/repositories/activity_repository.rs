@@ -44,7 +44,6 @@ pub struct ActivityPaginatedResult {
 /// Filter parameters for list queries
 #[derive(Debug, Clone, Default)]
 pub struct ActivityFilter {
-    pub company_id: Option<Uuid>,
     pub subject: Option<String>,
     pub activity_type: Option<ActivityType>,
     pub direction: Option<ActivityDirection>,
@@ -60,7 +59,7 @@ pub struct ActivityFilter {
 impl ActivityFilter {
     /// Check if any filter is set
     pub fn has_filters(&self) -> bool {
-        self.company_id.is_some() || self.subject.is_some() || self.activity_type.is_some() || self.direction.is_some() || self.lead_id.is_some() || self.opportunity_id.is_some() || self.party_id.is_some() || self.status.is_some() || self.assignee_id.is_some() || self.outcome.is_some() || self.notes.is_some()
+        self.subject.is_some() || self.activity_type.is_some() || self.direction.is_some() || self.lead_id.is_some() || self.opportunity_id.is_some() || self.party_id.is_some() || self.status.is_some() || self.assignee_id.is_some() || self.outcome.is_some() || self.notes.is_some()
     }
 }
 

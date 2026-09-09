@@ -48,7 +48,6 @@ impl From<ActivityId> for Uuid {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ActivityDto {
     pub id: ActivityId,
-    pub company_id: Uuid,
     pub subject: String,
     pub activity_type: ActivityType,
     pub direction: Option<ActivityDirection>,

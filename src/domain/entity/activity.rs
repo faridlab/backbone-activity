@@ -52,7 +52,6 @@ impl std::ops::Deref for ActivityId {
 #[derive(Debug, Clone, Serialize, Deserialize, FromRow)]
 pub struct Activity {
     pub id: Uuid,
-    pub company_id: Uuid,
     pub subject: String,
     pub activity_type: ActivityType,
     pub direction: Option<ActivityDirection>,
@@ -73,14 +72,13 @@ pub struct Activity {
 impl Activity {
     /// Create a builder for Activity
     pub fn builder() -> ActivityBuilder {
-        ActivityBuilder::default()
+        <ActivityBuilder as Default>::default()
     }
 
     /// Create a new Activity with required fields
-    pub fn new(company_id: Uuid, subject: String, activity_type: ActivityType, status: ActivityStatus) -> Self {
+    pub fn new(subject: String, activity_type: ActivityType, status: ActivityStatus) -> Self {
         Self {
             id: Uuid::new_v4(),
-            company_id,
             subject,
             activity_type,
             direction: None,
@@ -219,9 +217,6 @@ impl Activity {
     pub fn apply_patch(&mut self, fields: std::collections::HashMap<String, serde_json::Value>) {
         for (key, value) in fields {
             match key.as_str() {
-                "company_id" => {
-                    if let Ok(v) = serde_json::from_value(value) { self.company_id = v; }
-                }
                 "subject" => {
                     if let Ok(v) = serde_json::from_value(value) { self.subject = v; }
                 }
@@ -312,7 +307,6 @@ impl backbone_orm::EntityRepoMeta for Activity {
     fn column_types() -> std::collections::HashMap<String, String> {
         let mut m = std::collections::HashMap::new();
         m.insert("id".to_string(), "uuid".to_string());
-        m.insert("company_id".to_string(), "uuid".to_string());
         m.insert("lead_id".to_string(), "uuid".to_string());
         m.insert("opportunity_id".to_string(), "uuid".to_string());
         m.insert("party_id".to_string(), "uuid".to_string());
@@ -325,9 +319,6 @@ impl backbone_orm::EntityRepoMeta for Activity {
     fn search_fields() -> &'static [&'static str] {
         &["subject"]
     }
-    fn company_field() -> Option<&'static str> {
-        Some("company_id")
-    }
 }
 
 /// Builder for Activity entity
@@ -336,7 +327,6 @@ impl backbone_orm::EntityRepoMeta for Activity {
 /// System fields (id, metadata, timestamps) are auto-initialized.
 #[derive(Debug, Clone, Default)]
 pub struct ActivityBuilder {
-    company_id: Option<Uuid>,
     subject: Option<String>,
     activity_type: Option<ActivityType>,
     direction: Option<ActivityDirection>,
@@ -352,12 +342,6 @@ pub struct ActivityBuilder {
 }
 
 impl ActivityBuilder {
-    /// Set the company_id field (required)
-    pub fn company_id(mut self, value: Uuid) -> Self {
-        self.company_id = Some(value);
-        self
-    }
-
     /// Set the subject field (required)
     pub fn subject(mut self, value: String) -> Self {
         self.subject = Some(value);
@@ -434,19 +418,17 @@ impl ActivityBuilder {
     ///
     /// Returns Err if any required field without a default is missing.
     pub fn build(self) -> Result<Activity, String> {
-        let company_id = self.company_id.ok_or_else(|| "company_id is required".to_string())?;
         let subject = self.subject.ok_or_else(|| "subject is required".to_string())?;
 
         Ok(Activity {
             id: Uuid::new_v4(),
-            company_id,
             subject,
-            activity_type: self.activity_type.unwrap_or(ActivityType::default()),
+            activity_type: self.activity_type.unwrap_or_default(),
             direction: self.direction,
             lead_id: self.lead_id,
             opportunity_id: self.opportunity_id,
             party_id: self.party_id,
-            status: self.status.unwrap_or(ActivityStatus::default()),
+            status: self.status.unwrap_or_default(),
             scheduled_at: self.scheduled_at,
             occurred_at: self.occurred_at,
             assignee_id: self.assignee_id,

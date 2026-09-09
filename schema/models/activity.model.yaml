@@ -22,10 +22,6 @@ models:
         type: uuid
         attributes: ["@id", "@default(uuid)"]
         description: "Unique activity id"
-      company_id:
-        type: uuid
-        attributes: ["@required", "@exclude_from_foreign_key_check"]
-        description: "Org owner # logical FK to organization.Company.id"
       subject:
         type: string
         attributes: ["@required", "@max(200)"]
@@ -78,8 +74,6 @@ models:
         attributes: ["@audit_metadata"]
         description: "Audit metadata"
     indexes:
-      - type: index
-        fields: [company_id, status]
       - type: index
         fields: [lead_id]
       - type: index

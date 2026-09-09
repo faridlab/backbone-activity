@@ -8,7 +8,7 @@
 //! ## Usage from other modules
 //!
 //! ```text
-//! use activity::exports::{ActivityDto, ActivityQueryService};
+//! use activity::exports::{ActivityDto};
 //! ```
 
 mod types;
@@ -30,9 +30,6 @@ pub use events::*;
 /// - `ActivityDto` - Data transfer object for Activity
 /// - `ActivitySummary` - Summary view of Activity
 /// - `ActivityId` - Type-safe ID wrapper
-///
-/// ## Public Services
-/// - `ActivityQueryService` - Read-only queries
 ///
 /// ## Public Events
 /// - `ActivityCreatedEvent` - Published when Activity is created

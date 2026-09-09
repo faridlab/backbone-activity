@@ -5,32 +5,6 @@
 //! These services provide the public API for other modules.
 //! They only expose read operations - writes go through events.
 
-use anyhow::Result;
-use async_trait::async_trait;
-use uuid::Uuid;
-
-use super::types::*;
-
-// ============================================================================
-// QUERY SERVICE TRAIT
-// ============================================================================
-
-/// Public query service for Activity module
-///
-/// This trait defines read-only operations that other modules can use.
-/// Implementations should NOT expose internal domain logic.
-#[async_trait]
-pub trait ActivityQueryService: Send + Sync {
-    /// Get Activity by ID
-    async fn get_activity(&self, id: ActivityId) -> Result<Option<ActivityDto>>;
-
-    /// Get Activity summary by ID
-    async fn get_activity_summary(&self, id: ActivityId) -> Result<Option<ActivitySummary>>;
-
-    /// Check if Activity exists
-    async fn activity_exists(&self, id: ActivityId) -> Result<bool>;
-
-}
 
 // ============================================================================
 // CUSTOM SERVICES
