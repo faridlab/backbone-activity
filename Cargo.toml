@@ -1,6 +1,6 @@
 [package]
 name = "backbone-activity"
-version = "0.2.5"
+version = "0.2.6"
 edition = "2021"
 description = "Sales activity / touchpoints + rep tasks — the substrate lead/deal sit on"
 
