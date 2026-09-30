@@ -3,6 +3,7 @@ name = "backbone-activity"
 version = "0.2.19"
 edition = "2021"
 description = "Sales activity / touchpoints + rep tasks — the substrate lead/deal sit on"
+license = "MIT OR Apache-2.0"
 
 [lib]
 path = "src/lib.rs"
