@@ -314,6 +314,8 @@ impl backbone_orm::EntityRepoMeta for Activity {
         m.insert("activity_type".to_string(), "activity_type".to_string());
         m.insert("direction".to_string(), "activity_direction".to_string());
         m.insert("status".to_string(), "activity_status".to_string());
+        m.insert("scheduled_at".to_string(), "timestamptz".to_string());
+        m.insert("occurred_at".to_string(), "timestamptz".to_string());
         m
     }
     fn search_fields() -> &'static [&'static str] {
