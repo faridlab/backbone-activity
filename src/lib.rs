@@ -24,8 +24,6 @@ pub mod application;
 pub mod presentation;
 pub mod seeders;
 pub mod exports;
-// <<< CUSTOM MODULES
-// END CUSTOM
 
 // Re-exports for convenience - Domain entities
 pub use domain::entity::*;
@@ -54,8 +52,6 @@ use sqlx::PgPool;
 /// ```
 pub struct ActivityModule {
     pub(crate) activity_service: Arc<ActivityService>,
-    // <<< CUSTOM FIELDS
-    // END CUSTOM
 }
 
 impl ActivityModule {
@@ -102,15 +98,11 @@ impl ActivityModule {
             .merge(create_activity_read_routes(self.activity_service.clone()))
     }
 
-    // <<< CUSTOM METHODS
-    // END CUSTOM
 }
 
 /// Builder for ActivityModule
 pub struct ActivityModuleBuilder {
     db_pool: Option<PgPool>,
-    // <<< CUSTOM BUILDER FIELDS
-    // END CUSTOM
 }
 
 impl ActivityModuleBuilder {
@@ -118,8 +110,6 @@ impl ActivityModuleBuilder {
     pub fn new() -> Self {
         Self {
             db_pool: None,
-            // <<< CUSTOM BUILDER DEFAULTS
-            // END CUSTOM
         }
     }
 
@@ -129,8 +119,6 @@ impl ActivityModuleBuilder {
         self
     }
 
-    // <<< CUSTOM - custom builder methods
-    // END CUSTOM
 
     /// Build the module with configured dependencies
     pub fn build(self) -> anyhow::Result<ActivityModule> {
@@ -141,13 +129,9 @@ impl ActivityModuleBuilder {
         let activity_repository = Arc::new(ActivityRepository::new(db_pool.clone()));
         let activity_service = Arc::new(ActivityService::with_repository(activity_repository.clone()));
 
-        // <<< CUSTOM
-        // END CUSTOM
 
         Ok(ActivityModule {
             activity_service,
-            // <<< CUSTOM
-            // END CUSTOM
         })
     }
 }

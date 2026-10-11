@@ -9,5 +9,3 @@ pub mod activity_validator;
 
 pub use activity_validator::{ActivityValidator, activity_validator};
 
-// <<< CUSTOM
-// END CUSTOM

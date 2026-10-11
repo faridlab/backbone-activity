@@ -18,9 +18,5 @@ pub fn activity_validator() -> ActivityValidator {
         .rule(RequiredString::new("subject", |e: &Activity| &e.subject))
         .rule(OptionalNotBlank::new("outcome", |e: &Activity| e.outcome.as_deref()))
         .rule(OptionalNotBlank::new("notes", |e: &Activity| e.notes.as_deref()))
-    // <<< CUSTOM RULES
-    // END CUSTOM RULES
 }
 
-// <<< CUSTOM
-// END CUSTOM

@@ -352,7 +352,7 @@ impl backbone_core::ApplyUpdateDto<UpdateActivityDto> for Activity {
 // Custom DTOs
 // =============================================================================
 
-// <<< CUSTOM DTOs
 // Add custom DTOs specific to Activity here.
 // This section will be preserved during regeneration.
 // >>> END CUSTOM DTOs
+

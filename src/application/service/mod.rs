@@ -9,9 +9,5 @@ pub use error::{ServiceError, ServiceResult};
 
 pub mod activity_service;
 
-// <<< CUSTOM
-// END CUSTOM
 
 pub use activity_service::ActivityService;
-// <<< CUSTOM
-// END CUSTOM

@@ -8,5 +8,3 @@ pub mod activity_event_handlers;
 pub use activity_events::{ActivityEvent, ActivityEventPublisher, NoopActivityEventPublisher};
 pub use activity_event_handlers::ActivityEventHandler;
 
-// <<< CUSTOM
-// END CUSTOM

@@ -6,5 +6,3 @@ pub mod activity_domain_policy;
 
 pub use activity_domain_policy::ActivityDomainPolicy;
 
-// <<< CUSTOM
-// END CUSTOM

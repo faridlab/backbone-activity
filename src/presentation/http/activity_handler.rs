@@ -187,3 +187,4 @@ pub fn create_protected_activity_routes<A: AuthMiddleware + Send + Sync + 'stati
             }
         }))
 }
+

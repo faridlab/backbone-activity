@@ -23,3 +23,4 @@ async fn test_activity_api() {
         panic!("{} tests failed", failed.len());
     }
 }
+

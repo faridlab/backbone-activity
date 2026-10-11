@@ -7,10 +7,6 @@
 
 pub mod activity_handler;
 
-// <<< CUSTOM
-// END CUSTOM
 
 // Re-exports
 pub use activity_handler::{create_activity_routes, create_activity_read_routes, create_activity_write_routes};
-// <<< CUSTOM
-// END CUSTOM
