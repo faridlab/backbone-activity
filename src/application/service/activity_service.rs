@@ -56,7 +56,7 @@ impl backbone_core::write_guard::WriteGuard<Activity> for ActivityRowRules {
         };
         let row = &row;
         let old = ctx.before.and_then(|b| serde_json::to_value(b).ok());
-        let mut shadow = Vec::new();
+        let shadow = Vec::new();
         let mut refuse = Vec::new();
         // `subject_required` (@required on Activity.subject)
         if (create || (update && r::changed(old.as_ref(), row, &["subject"]))) && !r::holds(&r::and(r::is_not_null(r::field(row, "subject")), r::not(r::is_empty(r::trim(r::field(row, "subject")))))) {
@@ -64,15 +64,15 @@ impl backbone_core::write_guard::WriteGuard<Activity> for ActivityRowRules {
         }
         // `subject_max_length` (@max(200) on Activity.subject)
         if (create || (update && r::changed(old.as_ref(), row, &["subject"]))) && !r::holds(&r::le(r::length(r::field(row, "subject")), r::Val::Num(200.0_f64))) {
-            shadow.push(Violation::new("subject", "max_length", "subject must be at most 200 characters").with_param("max", 200_i64));
+            refuse.push(Violation::new("subject", "max_length", "subject must be at most 200 characters").with_param("max", 200_i64));
         }
         // `outcome_max_length` (@max(280) on Activity.outcome)
         if (create || (update && r::changed(old.as_ref(), row, &["outcome"]))) && !r::holds(&r::le(r::length(r::field(row, "outcome")), r::Val::Num(280.0_f64))) {
-            shadow.push(Violation::new("outcome", "max_length", "outcome must be at most 280 characters").with_param("max", 280_i64));
+            refuse.push(Violation::new("outcome", "max_length", "outcome must be at most 280 characters").with_param("max", 280_i64));
         }
         // `notes_max_length` (@max(4000) on Activity.notes)
         if (create || (update && r::changed(old.as_ref(), row, &["notes"]))) && !r::holds(&r::le(r::length(r::field(row, "notes")), r::Val::Num(4000.0_f64))) {
-            shadow.push(Violation::new("notes", "max_length", "notes must be at most 4000 characters").with_param("max", 4000_i64));
+            refuse.push(Violation::new("notes", "max_length", "notes must be at most 4000 characters").with_param("max", 4000_i64));
         }
         GuardOutcome { refuse, shadow }
     }
