@@ -1,6 +1,6 @@
 [package]
 name = "backbone-activity"
-version = "0.5.0"
+version = "0.6.0"
 edition = "2021"
 description = "Sales activity / touchpoints + rep tasks — the substrate lead/deal sit on"
 license = "MIT OR Apache-2.0"
