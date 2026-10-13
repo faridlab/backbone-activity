@@ -11,3 +11,4 @@ pub mod activity_service;
 
 
 pub use activity_service::ActivityService;
+pub use activity_service::ActivityRowRules;

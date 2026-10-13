@@ -127,7 +127,7 @@ impl ActivityModuleBuilder {
 
         // Activity service
         let activity_repository = Arc::new(ActivityRepository::new(db_pool.clone()));
-        let activity_service = Arc::new(ActivityService::with_repository(activity_repository.clone()));
+        let activity_service = Arc::new(ActivityService::with_repository(activity_repository.clone()).with_guard(Arc::new(crate::application::service::ActivityRowRules)));
 
 
         Ok(ActivityModule {

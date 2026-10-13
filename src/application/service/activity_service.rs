@@ -32,3 +32,49 @@ pub type ActivityService = GenericCrudService<
     ActivityRepository,
 >;
 
+/// The rules the schema declares for Activity, checked against the row a create or update
+/// would store. The generated build attaches it to [`ActivityService`]. A refusing rule's
+/// break answers 422; a rule in shadow is logged under `backbone::write_guard` and the
+/// write goes ahead.
+pub struct ActivityRowRules;
+
+#[async_trait::async_trait]
+impl backbone_core::write_guard::WriteGuard<Activity> for ActivityRowRules {
+    async fn check(
+        &self,
+        ctx: &backbone_core::write_guard::WriteCtx<'_, Activity>,
+    ) -> backbone_core::write_guard::GuardOutcome {
+        use backbone_core::row_rule as r;
+        use backbone_core::violation::Violation;
+        use backbone_core::write_guard::{GuardOutcome, WriteKind};
+        let (create, update) = (ctx.kind == WriteKind::Create, ctx.kind == WriteKind::Update);
+        let Some(after) = ctx.after.filter(|_| create || update) else {
+            return GuardOutcome::allow();
+        };
+        let Ok(row) = serde_json::to_value(after) else {
+            return GuardOutcome::allow();
+        };
+        let row = &row;
+        let old = ctx.before.and_then(|b| serde_json::to_value(b).ok());
+        let mut shadow = Vec::new();
+        let mut refuse = Vec::new();
+        // `subject_required` (@required on Activity.subject)
+        if (create || (update && r::changed(old.as_ref(), row, &["subject"]))) && !r::holds(&r::and(r::is_not_null(r::field(row, "subject")), r::not(r::is_empty(r::trim(r::field(row, "subject")))))) {
+            refuse.push(Violation::new("subject", "required", "subject is required"));
+        }
+        // `subject_max_length` (@max(200) on Activity.subject)
+        if (create || (update && r::changed(old.as_ref(), row, &["subject"]))) && !r::holds(&r::le(r::length(r::field(row, "subject")), r::Val::Num(200.0_f64))) {
+            shadow.push(Violation::new("subject", "max_length", "subject must be at most 200 characters").with_param("max", 200_i64));
+        }
+        // `outcome_max_length` (@max(280) on Activity.outcome)
+        if (create || (update && r::changed(old.as_ref(), row, &["outcome"]))) && !r::holds(&r::le(r::length(r::field(row, "outcome")), r::Val::Num(280.0_f64))) {
+            shadow.push(Violation::new("outcome", "max_length", "outcome must be at most 280 characters").with_param("max", 280_i64));
+        }
+        // `notes_max_length` (@max(4000) on Activity.notes)
+        if (create || (update && r::changed(old.as_ref(), row, &["notes"]))) && !r::holds(&r::le(r::length(r::field(row, "notes")), r::Val::Num(4000.0_f64))) {
+            shadow.push(Violation::new("notes", "max_length", "notes must be at most 4000 characters").with_param("max", 4000_i64));
+        }
+        GuardOutcome { refuse, shadow }
+    }
+}
+
