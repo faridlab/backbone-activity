@@ -12,3 +12,11 @@ pub mod activity_service;
 
 pub use activity_service::ActivityService;
 pub use activity_service::ActivityRowRules;
+
+/// A `ActivityService` over `repository` with its write guard attached: the way to build it, so its writes are
+/// served only with the rules the schema declares.
+pub fn build_activity_service(
+    repository: std::sync::Arc<crate::infrastructure::persistence::ActivityRepository>,
+) -> ActivityService {
+    ActivityService::with_repository(repository).with_guard(std::sync::Arc::new(ActivityRowRules))
+}
