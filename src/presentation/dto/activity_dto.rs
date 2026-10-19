@@ -33,7 +33,7 @@ use crate::domain::entity::ActivityType;
 pub struct CreateActivityDto {
     #[cfg_attr(feature = "openapi", schema(example = "example"))]
     pub subject: String,
-    #[serde(alias = "activity_type")]
+    #[serde(default = "default_create_activity_activity_type", alias = "activity_type")]
     pub activity_type: ActivityType,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub direction: Option<ActivityDirection>,
@@ -43,6 +43,7 @@ pub struct CreateActivityDto {
     pub opportunity_id: Option<Uuid>,
     #[serde(default, skip_serializing_if = "Option::is_none", alias = "party_id")]
     pub party_id: Option<Uuid>,
+    #[serde(default = "default_create_activity_status")]
     pub status: ActivityStatus,
     #[serde(default, skip_serializing_if = "Option::is_none", alias = "scheduled_at")]
     pub scheduled_at: Option<DateTime<Utc>>,
@@ -54,6 +55,14 @@ pub struct CreateActivityDto {
     pub outcome: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub notes: Option<String>,
+}
+
+fn default_create_activity_activity_type() -> ActivityType {
+    ActivityType::Whatsapp
+}
+
+fn default_create_activity_status() -> ActivityStatus {
+    ActivityStatus::Planned
 }
 
 // =============================================================================
@@ -110,26 +119,26 @@ pub struct PatchActivityDto {
     pub subject: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none", alias = "activity_type")]
     pub activity_type: Option<ActivityType>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub direction: Option<ActivityDirection>,
-    #[serde(skip_serializing_if = "Option::is_none", alias = "lead_id")]
-    pub lead_id: Option<Uuid>,
-    #[serde(skip_serializing_if = "Option::is_none", alias = "opportunity_id")]
-    pub opportunity_id: Option<Uuid>,
-    #[serde(skip_serializing_if = "Option::is_none", alias = "party_id")]
-    pub party_id: Option<Uuid>,
+    #[serde(default, deserialize_with = "crate::presentation::dto::double_option")]
+    pub direction: Option<Option<ActivityDirection>>,
+    #[serde(default, deserialize_with = "crate::presentation::dto::double_option", alias = "lead_id")]
+    pub lead_id: Option<Option<Uuid>>,
+    #[serde(default, deserialize_with = "crate::presentation::dto::double_option", alias = "opportunity_id")]
+    pub opportunity_id: Option<Option<Uuid>>,
+    #[serde(default, deserialize_with = "crate::presentation::dto::double_option", alias = "party_id")]
+    pub party_id: Option<Option<Uuid>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub status: Option<ActivityStatus>,
-    #[serde(skip_serializing_if = "Option::is_none", alias = "scheduled_at")]
-    pub scheduled_at: Option<DateTime<Utc>>,
-    #[serde(skip_serializing_if = "Option::is_none", alias = "occurred_at")]
-    pub occurred_at: Option<DateTime<Utc>>,
-    #[serde(skip_serializing_if = "Option::is_none", alias = "assignee_id")]
-    pub assignee_id: Option<Uuid>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub outcome: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub notes: Option<String>,
+    #[serde(default, deserialize_with = "crate::presentation::dto::double_option", alias = "scheduled_at")]
+    pub scheduled_at: Option<Option<DateTime<Utc>>>,
+    #[serde(default, deserialize_with = "crate::presentation::dto::double_option", alias = "occurred_at")]
+    pub occurred_at: Option<Option<DateTime<Utc>>>,
+    #[serde(default, deserialize_with = "crate::presentation::dto::double_option", alias = "assignee_id")]
+    pub assignee_id: Option<Option<Uuid>>,
+    #[serde(default, deserialize_with = "crate::presentation::dto::double_option")]
+    pub outcome: Option<Option<String>>,
+    #[serde(default, deserialize_with = "crate::presentation::dto::double_option")]
+    pub notes: Option<Option<String>>,
 }
 
 impl PatchActivityDto {
@@ -332,12 +341,4 @@ impl backbone_core::ApplyUpdateDto<UpdateActivityDto> for Activity {
         Ok(self)
     }
 }
-
-// =============================================================================
-// Custom DTOs
-// =============================================================================
-
-// Add custom DTOs specific to Activity here.
-// This section will be preserved during regeneration.
-// >>> END CUSTOM DTOs
 

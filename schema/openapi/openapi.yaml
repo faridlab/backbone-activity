@@ -457,9 +457,6 @@ components:
       type: object
       required:
         - subject
-        - activity_type
-        - status
-        - metadata
       properties:
         subject:
           type: string
@@ -503,8 +500,6 @@ components:
           nullable: true
           type: string
           maxLength: 4000
-        metadata:
-          type: object
 
     UpdateActivityRequest:
       type: object
@@ -512,7 +507,6 @@ components:
         - subject
         - activity_type
         - status
-        - metadata
       properties:
         subject:
           type: string
@@ -556,8 +550,6 @@ components:
           nullable: true
           type: string
           maxLength: 4000
-        metadata:
-          type: object
 
     PatchActivityRequest:
       type: object
@@ -604,8 +596,6 @@ components:
           nullable: true
           type: string
           maxLength: 4000
-        metadata:
-          type: object
 
     ActivityList:
       type: object

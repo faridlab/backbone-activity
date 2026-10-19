@@ -9,4 +9,4 @@ pub mod activity_handler;
 
 
 // Re-exports
-pub use activity_handler::{create_activity_routes, create_activity_read_routes, create_activity_write_routes};
+pub use activity_handler::{create_activity_routes, create_activity_read_routes, create_activity_write_routes, activity_permissions};
